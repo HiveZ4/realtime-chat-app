@@ -1,5 +1,7 @@
+import ConversationFallback from "@/components/shared/conversation/ConversationFallback";
+
 const ConversationsPage = () => {
-  return <>Converstions Page</>;
+  return <ConversationFallback />;
 };
 
 export default ConversationsPage;

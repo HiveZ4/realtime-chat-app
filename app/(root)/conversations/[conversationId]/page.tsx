@@ -1,5 +1,7 @@
+import ConversationContainer from "@/components/shared/conversation/ConversationContainer";
+
 const ConversationPage = () => {
-  return <>Conversation Page</>;
+  return <ConversationContainer>Conversation Page</ConversationContainer>;
 };
 
 export default ConversationPage;
