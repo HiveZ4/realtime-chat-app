@@ -1,5 +1,7 @@
+import SidebarWrapper from "@/components/shared/sidebar/SidebarWrapper";
+
 type Props = React.PropsWithChildren<{}>;
 
 export default function Layout({ children }: Props) {
-  return <>{children}</>;
+  return <SidebarWrapper>{children}</SidebarWrapper>;
 }
