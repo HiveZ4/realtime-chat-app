@@ -20,6 +20,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useConversation } from "@/hooks/useConversation";
+import MessageActionsPopover from "./MessageActionsPopover";
 
 type ChatInputProps = {};
 
@@ -72,6 +73,7 @@ const ChatInput: FC<ChatInputProps> = ({}) => {
   return (
     <Card className="w-full p-2 rounded-lg relative">
       <div className="flex gap-2 items-end w-full">
+        <MessageActionsPopover />
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
