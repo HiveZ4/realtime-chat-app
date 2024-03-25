@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ConvexClientProvider } from "@/providers/ConvexClientProvider";
@@ -8,9 +8,20 @@ import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
+export const viewport: Viewport = {
+  themeColor: "DodgerBlue",
+};
+
 export const metadata: Metadata = {
   title: "Chat App",
   description: "Realtime chat app built using NextJS",
+  generator: "Next.js",
+  manifest: "/manifest.json",
+  authors: [{ name: "Code Complete" }],
+  icons: [
+    { rel: "apple-touch-icon", url: "icon-192x192.png" },
+    { rel: "icon", url: "icon-192x192.png" },
+  ],
 };
 
 export default function RootLayout({
