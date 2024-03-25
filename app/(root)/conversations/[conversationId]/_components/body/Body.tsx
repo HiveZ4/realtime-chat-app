@@ -16,6 +16,7 @@ import { useConversation } from "@/hooks/useConversation";
 
 type Props = {
   members: {
+    _id?: Id<"users">;
     lastSeenMessageId?: Id<"messages">;
     username?: string;
     [key: string]: any;
@@ -72,9 +73,12 @@ const Body = ({ members }: Props) => {
     }
   };
 
-  const getSeenMessage = (messageId: Id<"messages">) => {
+  const getSeenMessage = (messageId: Id<"messages">, senderId: Id<"users">) => {
     const seenUsers = members
-      .filter((member) => member.lastSeenMessageId === messageId)
+      .filter(
+        (member) =>
+          member.lastSeenMessageId === messageId && member._id !== senderId
+      )
       .map((user) => user.username!.split(" ")[0]);
 
     if (seenUsers.length === 0) return undefined;
@@ -90,9 +94,7 @@ const Body = ({ members }: Props) => {
             messages[index - 1]?.message.senderId ===
             messages[index].message.senderId;
 
-          const seenMessage = isCurrentUser
-            ? getSeenMessage(message._id)
-            : undefined;
+          const seenMessage = getSeenMessage(message._id, message.senderId);
 
           return (
             <Message

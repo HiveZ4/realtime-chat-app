@@ -12,6 +12,7 @@ type Props = {
   username: string;
   lastMessageSender?: string;
   lastMessageContent?: string;
+  unseenCount: number;
 };
 
 const DMConversationItem = ({
@@ -20,6 +21,7 @@ const DMConversationItem = ({
   username,
   lastMessageSender,
   lastMessageContent,
+  unseenCount,
 }: Props) => {
   return (
     <Link href={`/conversations/${id}`} className="w-full">
@@ -50,6 +52,8 @@ const DMConversationItem = ({
             )}
           </div>
         </div>
+
+        {unseenCount ? <Badge>{unseenCount}</Badge> : null}
       </Card>
     </Link>
   );
