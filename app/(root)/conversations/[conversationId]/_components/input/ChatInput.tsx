@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { useMutationState } from "@/hooks/useMutationState";
 import { SendHorizonal } from "lucide-react";
-import { FC, useRef } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/form";
 import { useConversation } from "@/hooks/useConversation";
 import MessageActionsPopover from "./MessageActionsPopover";
+import { useTheme } from "next-themes";
+import EmojiPicker, { Theme } from "emoji-picker-react";
 
 type ChatInputProps = {};
 
@@ -29,13 +31,33 @@ const chatMessageSchema = z.object({
 });
 
 const ChatInput: FC<ChatInputProps> = ({}) => {
+  const emojiPickerRef = useRef<any>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
 
   const { conversationId } = useConversation();
+
+  const { theme } = useTheme();
 
   const { mutate: createMessage, pending } = useMutationState(
     api.message.create
   );
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        emojiPickerRef.current &&
+        !emojiPickerRef.current.contains(event.target)
+      ) {
+        setEmojiPickerOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const form = useForm<z.infer<typeof chatMessageSchema>>({
     resolver: zodResolver(chatMessageSchema),
@@ -72,8 +94,18 @@ const ChatInput: FC<ChatInputProps> = ({}) => {
 
   return (
     <Card className="w-full p-2 rounded-lg relative">
+      <div className="absolute bottom-16" ref={emojiPickerRef}>
+        <EmojiPicker
+          open={emojiPickerOpen}
+          theme={theme as Theme}
+          onEmojiClick={() => {
+            setEmojiPickerOpen(false);
+          }}
+          lazyLoadEmojis
+        />
+      </div>
       <div className="flex gap-2 items-end w-full">
-        <MessageActionsPopover />
+        <MessageActionsPopover setEmojiPickerOpen={setEmojiPickerOpen} />
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
