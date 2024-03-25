@@ -70,12 +70,55 @@ export const get = query({
 
             return {
               username: member.username,
+              lastSeenMessageId: membership.lastSeenMessage,
             };
           })
       );
 
       return { ...conversation, otherMembers, otherMember: null };
     }
+  },
+});
+
+export const markRead = mutation({
+  args: {
+    conversationId: v.id("conversations"),
+    messageId: v.id("messages"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError("Unauthorized");
+    }
+
+    const currentUser = await getUserByClerkId({
+      ctx,
+      clerkId: identity.subject,
+    });
+
+    if (!currentUser) {
+      throw new ConvexError("User not found");
+    }
+
+    const membership = await ctx.db
+      .query("conversationMembers")
+      .withIndex("by_memberId_conversationId", (q) =>
+        q
+          .eq("memberId", currentUser._id)
+          .eq("conversationId", args.conversationId)
+      )
+      .unique();
+
+    if (!membership) {
+      throw new ConvexError("You aren't a member of this conversation");
+    }
+
+    const lastMessage = await ctx.db.get(args.messageId);
+
+    await ctx.db.patch(membership._id, {
+      lastSeenMessage: lastMessage ? lastMessage._id : undefined,
+    });
   },
 });
 
