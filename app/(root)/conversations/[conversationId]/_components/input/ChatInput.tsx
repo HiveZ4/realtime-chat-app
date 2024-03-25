@@ -34,6 +34,7 @@ const ChatInput: FC<ChatInputProps> = ({}) => {
   const emojiPickerRef = useRef<any>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
+  const [cursorPosition, setCursorPosition] = useState(0);
 
   const { conversationId } = useConversation();
 
@@ -66,11 +67,26 @@ const ChatInput: FC<ChatInputProps> = ({}) => {
     },
   });
 
+  const content = form.watch("content", "");
+
   const handleInputChange = (event: any) => {
     const { value, selectionStart } = event.target;
     if (selectionStart !== null) {
       form.setValue("content", value);
+      setCursorPosition(selectionStart);
     }
+  };
+
+  const insertEmoji = (emoji: string) => {
+    const newText = [
+      content.substring(0, cursorPosition),
+      emoji,
+      content.substring(cursorPosition),
+    ].join("");
+
+    form.setValue("content", newText);
+
+    setCursorPosition(cursorPosition + emoji.length);
   };
 
   const handleSubmit = async (values: z.infer<typeof chatMessageSchema>) => {
@@ -98,7 +114,8 @@ const ChatInput: FC<ChatInputProps> = ({}) => {
         <EmojiPicker
           open={emojiPickerOpen}
           theme={theme as Theme}
-          onEmojiClick={() => {
+          onEmojiClick={(emojiDetails) => {
+            insertEmoji(emojiDetails.emoji);
             setEmojiPickerOpen(false);
           }}
           lazyLoadEmojis
