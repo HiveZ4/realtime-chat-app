@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import React from "react";
 import { format } from "date-fns";
 import ImagePreview from "./ImagePreview";
+import FilePreview from "./FilePreview";
 
 type Props = {
   fromCurrentUser: boolean;
@@ -54,6 +55,7 @@ const Message = ({
               {content}
             </p>
           ) : null}
+          {type === "file" ? <FilePreview url={content[0]} /> : null}
           {type === "image" ? <ImagePreview urls={content} /> : null}
           <p
             className={cn(`text-xs flex w-full my-1`, {
