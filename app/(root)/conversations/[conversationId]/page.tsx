@@ -83,6 +83,7 @@ const ConversationPage = ({ params: { conversationId } }: Props) => {
                 },
               ]
         }
+        setCallType={setCallType}
       />
       <Body
         members={
@@ -94,6 +95,8 @@ const ConversationPage = ({ params: { conversationId } }: Props) => {
             ? [conversation.otherMember]
             : []
         }
+        callType={callType}
+        setCallType={setCallType}
       />
       <ChatInput />
     </ConversationContainer>
